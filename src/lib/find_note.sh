@@ -1,6 +1,7 @@
-# TODO: Create the note creation script
+find_note() {
+	osascript <<EOF
 on run argv
-	set search_string to item 1 of argv 
+	set search_string to "$1" 
 	
 	tell application "Notes"
 		set found_notes to (every note whose body contains search_string)
@@ -16,3 +17,5 @@ on run argv
 		end if
 	end tell
 end run
+EOF
+}

@@ -1,0 +1,20 @@
+name: stash
+help: Bidirectionally sync Markdown files with Apple Notes
+version: 0.1.0
+
+commands:
+- name: push
+  help: Push a Markdown file to Apple Notes (create or update)
+
+  args:
+  - name: file
+    required: true
+    help: Path to the Markdown file to push
+
+- name: pull
+  help: Pull content from Apple Notes to a Markdown file
+
+  args:
+  - name: file
+    required: true
+    help: Path to the Markdown file to update
