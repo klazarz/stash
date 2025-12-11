@@ -54,9 +54,10 @@ src/
   *_command.sh      # Command implementations
 
 test/
-  unit_*_spec.sh           # Unit tests (pure functions)
-  integration_*_spec.sh    # Integration tests (I/O, AppleScript)
-  e2e_*_spec.sh           # End-to-end tests (full CLI workflows)
+  cases/                   # All test specs
+    unit_*_spec.sh         # Unit tests (pure functions)
+    integration_*_spec.sh  # Integration tests (I/O, AppleScript)
+    e2e_*_spec.sh          # End-to-end tests (full CLI workflows)
   fixtures/                # Test fixture files (flat structure)
   approvals/               # Auto-generated approval files
   approvals.bash           # Approval testing framework
@@ -92,8 +93,11 @@ dist/                # Generated CLI (from bashly)
 
 3. **E2E Tests** (`e2e_*_spec.sh`)
    - Test full CLI workflows
-   - Mock integration functions using aliases
+   - Mock integration functions by redefining them (not aliases)
+   - Simulate bashly args with `declare -A args`
    - Test user interaction flows
+   - **Must unset mocks after each test** to avoid pollution
+   - Run with `SKIP_INTEGRATION=1` to skip integration tests
    - Examples: `push` command, `pull` command
 
 ### Approval Testing
@@ -121,6 +125,7 @@ describe "strip_frontmatter"
 - `$FIXTURES_PATH` - Path to test fixtures
 - `$LIB_PATH` - Path to lib functions  
 - `$CLI_PATH` - Path to CLI executable
+- `$APPROVALS_BASH` - Path to approvals.bash (for portable sourcing)
 
 ### Test Execution
 
@@ -154,6 +159,48 @@ describe "create_note"
 - Always clean up after yourself (create → test → delete)
 - Use `allow_diff` for dynamic IDs: `allow_diff "x-coredata://[^/]+/ICNote/p[0-9]+"`
 - Keep it simple: don't over-engineer setup/teardown
+
+### E2E Test Pattern
+
+```bash
+#!/usr/bin/env bash
+
+source "$APPROVALS_BASH"
+
+# Source all lib functions
+for f in "$LIB_PATH"/*.sh; do source "$f"; done
+
+describe "push_command"
+
+  # Setup: create temp file
+  test_file=$(mktemp)
+  echo "# Test" > "$test_file"
+  
+  # Mock Apple Notes functions by redefining
+  find_note() { echo ""; }
+  create_note() { echo "x-coredata://test/ICNote/p123"; }
+  update_note() { echo ""; }
+  
+  # Simulate bashly args
+  declare -A args
+  args[file]="$test_file"
+  
+  # Source the command and test
+  approve "echo 'y' | source $SRC_PATH/push_command.sh" \
+    "push_command_new_file"
+  
+  # Cleanup: unset mocks to avoid pollution
+  unset -f find_note create_note update_note
+  unset args
+  rm -f "$test_file"
+```
+
+**Key points**:
+- Mock functions by redefining them (not aliases)
+- Use `declare -A args` to simulate bashly arguments
+- **Always unset mocks after each test**
+- Use `echo 'y' |` to simulate user input for prompts
+- Clean up temp files
 
 ## Code Style
 
@@ -262,9 +309,11 @@ Each implementation gate includes:
 
 ### Content Format
 
-- **For now**: Push body as-is, no markdown→HTML conversion
-- Avoid premature optimization
-- Get sync working first, formatting later
+- Use **Pandoc** for markdown↔HTML conversion
+- `markdown_to_html`: `pandoc -f gfm -t html --wrap=none`
+- `html_to_markdown`: `pandoc -f html -t gfm --wrap=none`
+- Strip frontmatter before pushing to Apple Notes
+- Preserve frontmatter when pulling from Apple Notes
 
 ### Error Recovery
 
@@ -302,10 +351,33 @@ test-unit:      # Run unit tests only (skip integration)
 - **approvals.bash**: Approval testing framework
 - **pcregrep**: PCRE regex tool (for frontmatter stripping)
 - **osascript**: AppleScript execution (for Apple Notes integration)
+- **Pandoc**: Markdown↔HTML conversion (`pandoc -f gfm -t html --wrap=none`)
 
 ## Current Implementation Status
 
-See README.md for the current backlog and implementation status.
+### Completed Gates (8 of 10)
+
+| Gate | Component | Description | Status |
+|------|-----------|-------------|--------|
+| 1 | `strip_frontmatter.sh` | Strip YAML frontmatter using pcregrep | ✅ |
+| 2 | `get_id_from_frontmatter.sh` | Extract apple_notes_id from frontmatter | ✅ |
+| 3 | `update_frontmatter.sh` | Add/update apple_notes_id in frontmatter | ✅ |
+| 4 | `create_note.sh`, `delete_note.sh` | Create/delete Apple Notes via AppleScript | ✅ |
+| 5 | `find_note.sh` | Find note by ID (filters Recently Deleted) | ✅ |
+| 5.5 | `markdown_to_html.sh`, `html_to_markdown.sh` | Pandoc-based conversion | ✅ |
+| 6 | `read_note.sh` | Read note body content by ID | ✅ |
+| 7 | `update_note.sh` | Update note content by ID | ✅ |
+| 7.5 | `read_markdown_file.sh`, `write_markdown_file.sh` | File I/O utilities | ✅ |
+| 8 | Test reorganization | Moved tests to `test/cases/` | ✅ |
+| 9 | `push_command.sh` | Push markdown file to Apple Notes | 🔄 Next |
+| 10 | `pull_command.sh` | Pull note from Apple Notes to markdown | ⏳ |
+
+### Test Coverage
+
+- **Unit tests**: 32 tests (pure functions)
+- **Integration tests**: 11 tests (Apple Notes operations)
+- **E2E tests**: 2 tests (CLI workflows)
+- **Total**: 45 tests
 
 ## Questions?
 
