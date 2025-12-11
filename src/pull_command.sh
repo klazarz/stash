@@ -38,9 +38,7 @@ markdown_body=$(echo "$html_content" | html_to_markdown)
 frontmatter=$(echo "$markdown_content" | extract_frontmatter)
 
 # Combine: frontmatter + empty line + markdown body
-updated_content="${frontmatter}
-
-${markdown_body}"
+updated_content=$(printf '%s\n\n%s' "$frontmatter" "$markdown_body")
 
 # Write back to file
 write_markdown_file "$file_path" "$updated_content"
