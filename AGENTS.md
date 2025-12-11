@@ -162,13 +162,17 @@ describe "create_note"
 
 ### E2E Test Pattern
 
+**CRITICAL**: The `approve` function runs commands via `eval` in a subshell. Mocks defined in the parent shell will NOT be visible. You MUST define mocks INSIDE the approve string.
+
 ```bash
 #!/usr/bin/env bash
 
 source "$APPROVALS_BASH"
 
-# Source all lib functions
+# Source all lib functions (for pure utilities only)
 for f in "$LIB_PATH"/*.sh; do source "$f"; done
+
+SRC_PATH="$PWD/../src"
 
 describe "push_command"
 
@@ -176,31 +180,27 @@ describe "push_command"
   test_file=$(mktemp)
   echo "# Test" > "$test_file"
   
-  # Mock Apple Notes functions by redefining
-  find_note() { echo ""; }
-  create_note() { echo "x-coredata://test/ICNote/p123"; }
-  update_note() { echo ""; }
+  # CORRECT: Define mocks INSIDE the approve string
+  approve "
+    find_note() { return 1; }
+    create_note() { echo 'x-coredata://test/ICNote/p123'; return 0; }
+    export -f find_note create_note
+    declare -A args; args[file]='$test_file'
+    echo 'y' | source $SRC_PATH/push_command.sh
+    unset -f find_note create_note
+  " "push_new_file_confirm"
   
-  # Simulate bashly args
-  declare -A args
-  args[file]="$test_file"
-  
-  # Source the command and test
-  approve "echo 'y' | source $SRC_PATH/push_command.sh" \
-    "push_command_new_file"
-  
-  # Cleanup: unset mocks to avoid pollution
-  unset -f find_note create_note update_note
-  unset args
+  # Cleanup temp file
   rm -f "$test_file"
 ```
 
 **Key points**:
-- Mock functions by redefining them (not aliases)
-- Use `declare -A args` to simulate bashly arguments
-- **Always unset mocks after each test**
+- **MOCKS MUST BE INSIDE THE APPROVE STRING** - parent shell functions are NOT visible in eval subshell
+- Use `export -f function_name` after defining mocks
+- Use `declare -A args; args[key]='value'` to simulate bashly arguments
 - Use `echo 'y' |` to simulate user input for prompts
-- Clean up temp files
+- Use `allow_diff` before `approve` to normalize dynamic paths (e.g., temp files)
+- Clean up temp files after each test
 
 ## Code Style
 
