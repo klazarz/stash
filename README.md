@@ -1,4 +1,6 @@
-# Apple Notes Sync Tool
+# Stash
+
+Bidirectionally sync Markdown files with Apple Notes!
 
 ## Background & Rationale
 
