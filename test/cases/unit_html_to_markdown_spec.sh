@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source approvals.bash
+source "$APPROVALS_BASH"
 source "$LIB_PATH/html_to_markdown.sh"
 
 describe "html_to_markdown"

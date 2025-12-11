@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source approvals.bash
+source "$APPROVALS_BASH"
 source "$LIB_PATH/strip_frontmatter.sh"
 
 describe "strip_frontmatter"

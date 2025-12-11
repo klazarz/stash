@@ -3,7 +3,7 @@
 # WARNING: This test creates and deletes actual Apple Notes
 # Make sure you're running in a test environment
 
-source approvals.bash
+source "$APPROVALS_BASH"
 source "$LIB_PATH/create_note.sh"
 source "$LIB_PATH/read_note.sh"
 source "$LIB_PATH/delete_note.sh"

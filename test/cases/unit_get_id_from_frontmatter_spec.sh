@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source approvals.bash
+source "$APPROVALS_BASH"
 source "$LIB_PATH/get_id_from_frontmatter.sh"
 
 describe "get_id_from_frontmatter"

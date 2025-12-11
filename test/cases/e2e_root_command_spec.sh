@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source approvals.bash
+source "$APPROVALS_BASH"
 
 describe "root command"
 

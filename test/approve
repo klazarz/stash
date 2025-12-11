@@ -13,15 +13,19 @@ SKIP_INTEGRATION=${SKIP_INTEGRATION:-0}
 export FIXTURES_PATH="$PWD/fixtures"
 export LIB_PATH="$PWD/../src/lib"
 export CLI_PATH="$PWD/../dist/stash"
+export APPROVALS_BASH="$PWD/approvals.bash"
 
-# Run all spec files
-for file in *_spec.sh ; do
+# Run all spec files from cases directory
+for file in cases/*_spec.sh ; do
+  # Extract filename for display and pattern matching
+  filename=$(basename "$file")
+  
   # Skip integration tests if requested
-  if [[ "$SKIP_INTEGRATION" == "1" ]] && [[ "$file" =~ ^integration_ ]]; then
-    echo "Skipping integration test: $file"
+  if [[ "$SKIP_INTEGRATION" == "1" ]] && [[ "$filename" =~ ^integration_ ]]; then
+    echo "Skipping integration test: $filename"
     continue
   fi
   
-  context "$file"
-  ./$file
+  context "$filename"
+  ./"$file"
 done
