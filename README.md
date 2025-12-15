@@ -1,4 +1,12 @@
-# Stash
+```
+                                   
+                                   
+▄█████ ██████ ▄████▄ ▄█████ ██  ██ 
+▀▀▀▄▄▄   ██   ██▄▄██ ▀▀▀▄▄▄ ██████ 
+█████▀   ██   ██  ██ █████▀ ██  ██ 
+                                   
+                                   
+```
 
 Bidirectionally sync Markdown files with Apple Notes!
 
@@ -103,14 +111,6 @@ The tool is built in three layers:
 
 ## Development
 
-### Prerequisites
-
-- **macOS** with Apple Notes
-- **bash 4.2+** (install via `brew install bash`)
-- **[Pandoc](https://pandoc.org/installing.html)** (`brew install pandoc`)
-- **pcregrep** (`brew install pcre`)
-- **Docker** for building with bashly
-
 ### Setup
 
 Clone the repository and build:
@@ -160,9 +160,6 @@ This will:
 3. Create and push a git tag
 4. Trigger the release workflow (build, publish, update Homebrew formula)
 
-### Guidelines
-
-See [AGENTS.md](AGENTS.md) for detailed development guidelines, coding standards, and testing approach.
 
 ## Backlog & Contribution
 
