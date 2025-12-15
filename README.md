@@ -2,6 +2,29 @@
 
 Bidirectionally sync Markdown files with Apple Notes!
 
+## Getting Started
+
+### Installation
+
+```bash
+brew tap shakedlokits/stash
+brew install stash
+```
+
+### Quick Example
+
+Push a markdown file to Apple Notes:
+```bash
+stash push my-note.md
+```
+
+Pull changes back from Apple Notes:
+```bash
+stash pull my-note.md
+```
+
+That's it! The tool uses front-matter to track which Apple Note corresponds to your file.
+
 ## Background & Rationale
 
 Apple Notes has been my daily driver for years. I love its simplicity—it syncs fast, stays out of the way, and just lets me write.
@@ -60,19 +83,6 @@ Don't fret. Simply:
 3. It rewrites your local Markdown file with the content from Apple Notes.
    > NOTE: The front-matter is unchanged during pull operations.
 
-## Installation
-
-### Homebrew (recommended)
-
-```bash
-brew tap shakedlokits/stash
-brew install stash
-```
-
-### Manual
-
-Download the latest release from [GitHub Releases](https://github.com/shakedlokits/stash/releases) and place it in your PATH.
-
 ## Requirements
 
 - **macOS** with Apple Notes
@@ -90,6 +100,69 @@ The tool is built in three layers:
 **[Pandoc](https://pandoc.org)** handles the conversion between Markdown and HTML, ensuring content is properly formatted for Apple Notes.
 
 **[`Bashly`](https://bashly.dev)** ties it all together, providing a clean CLI interface, shell completions, and command scaffolding.
+
+## Development
+
+### Prerequisites
+
+- **macOS** with Apple Notes
+- **bash 4.2+** (install via `brew install bash`)
+- **[Pandoc](https://pandoc.org/installing.html)** (`brew install pandoc`)
+- **pcregrep** (`brew install pcre`)
+- **Docker** for building with bashly
+
+### Setup
+
+Clone the repository and build:
+
+```bash
+git clone https://github.com/shakedlokits/stash.git
+cd stash
+make build
+```
+
+### Running Tests
+
+```bash
+# Run all tests (requires Apple Notes access)
+make test
+
+# Run unit tests only (no Apple Notes required)
+make test-unit
+```
+
+### Project Structure
+
+```
+src/
+  lib/           # Utility functions (pure and integration)
+  bashly.yml     # CLI configuration
+  *_command.sh   # Command implementations
+test/
+  cases/         # Test specs (unit, integration, e2e)
+  fixtures/      # Test fixture files
+  approvals/     # Approval test snapshots
+dist/
+  stash          # Generated CLI (via bashly)
+Formula/
+  stash.rb       # Homebrew formula
+```
+
+### Creating a Release
+
+```bash
+make release VERSION=x.y.z
+```
+
+This will:
+1. Update the version in `src/bashly.yml`
+2. Commit the change
+3. Create and push a git tag
+4. Trigger the release workflow (build, publish, update Homebrew formula)
+
+### Guidelines
+
+See [AGENTS.md](AGENTS.md) for detailed development guidelines, coding standards, and testing approach.
 
 ## Backlog & Contribution
 
