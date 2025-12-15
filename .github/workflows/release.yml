@@ -69,9 +69,9 @@ jobs:
           chmod +x stash
 
       - name: Verify version matches tag
-        shell: /opt/homebrew/bin/bash {0}
         run: |
-          VERSION=$(./stash --version)
+          export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
+          VERSION=$(bash ./stash --version)
           TAG="${{ github.ref_name }}"
           EXPECTED="${TAG#v}"
           if [[ "$VERSION" != "$EXPECTED" ]]; then
