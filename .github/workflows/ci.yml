@@ -12,7 +12,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: brew install pcre pandoc
+        run: |
+          brew install pcre pandoc bash
+          echo "/usr/local/bin" >> $GITHUB_PATH
 
       - name: Install bashly
         run: gem install bashly
@@ -23,4 +25,5 @@ jobs:
           bashly generate
 
       - name: Run unit tests
+        shell: /usr/local/bin/bash {0}
         run: SKIP_INTEGRATION=1 make test
