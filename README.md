@@ -96,7 +96,7 @@ This backlog contains both current and future development items, feel free to ta
    - [x] `Pandoc` integration
    - [x] `Bashly` setup
       - [x] CLI interface
-      - [ ] Shell completion
+      - [x] Shell completion
       - [ ] Documentation
       - [x] Approval testing
 - [ ] Nice to have

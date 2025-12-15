@@ -13,6 +13,8 @@ dependencies:
 commands:
 - name: push
   help: Push a Markdown file to Apple Notes (create or update)
+  completions:
+  - <file>
 
   args:
   - name: file
@@ -21,8 +23,15 @@ commands:
 
 - name: pull
   help: Pull content from Apple Notes to a Markdown file
+  completions:
+  - <file>
 
   args:
   - name: file
     required: true
     help: Path to the Markdown file to update
+
+- name: completions
+  help: |-
+    Generate bash completions
+    Usage: eval "$(stash completions)"
