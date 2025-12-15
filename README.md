@@ -16,7 +16,7 @@ Bidirectionally sync Markdown files with Apple Notes!
 
 ```bash
 brew tap shakedlokits/stash https://github.com/shakedlokits/stash
-brew install stash
+brew install shakedlokits/stash/stash
 ```
 
 ### Quick Example

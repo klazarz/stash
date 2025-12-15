@@ -414,7 +414,7 @@ Users install via:
 
 ```bash
 brew tap shakedlokits/stash https://github.com/shakedlokits/stash
-brew install stash
+brew install shakedlokits/stash/stash
 ```
 
 The `Formula/stash.rb` is automatically updated by the release pipeline with the correct version URL and sha256.
