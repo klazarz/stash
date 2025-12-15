@@ -2,7 +2,7 @@ class Stash < Formula
   desc "Bidirectionally sync Markdown files with Apple Notes"
   homepage "https://github.com/shakedlokits/stash"
   url "https://github.com/shakedlokits/stash/releases/download/v0.1.0/stash"
-  sha256 "PLACEHOLDER"
+  sha256 "4800284f088a269afa5f67ea9a4623778310ea366b064eb6ad80ab5571604a95"
   license "GPL-3.0-or-later"
 
   depends_on "pandoc"
