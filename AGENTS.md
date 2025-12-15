@@ -64,6 +64,14 @@ test/
   approve                  # Test runner
 
 dist/                # Generated CLI (from bashly)
+
+Formula/
+  stash.rb           # Homebrew formula (auto-updated on release)
+
+.github/
+  workflows/
+    ci.yml           # CI pipeline (runs tests on push/PR)
+    release.yml      # Release pipeline (build, publish, update formula)
 ```
 
 ### Naming Conventions
@@ -337,7 +345,79 @@ Apple Notes has specific HTML behaviors that require special handling:
 build:          # Generate CLI from bashly
 test:           # Run all tests
 test-unit:      # Run unit tests only (skip integration)
+release:        # Create a new release (VERSION=x.y.z required)
 ```
+
+## CI/CD Pipeline
+
+### Continuous Integration (`ci.yml`)
+
+Triggered on push/PR to `master`:
+1. Runs on `macos-latest`
+2. Installs dependencies (`pcre`, `pandoc`, `bash`)
+3. Installs bashly via Ruby gem
+4. Builds CLI with `bashly generate`
+5. Runs unit tests (`SKIP_INTEGRATION=1`)
+
+**Note**: Integration tests are skipped in CI because they require Apple Notes access.
+
+### Release Pipeline (`release.yml`)
+
+Triggered on version tag push (`v*`):
+
+```
+git tag v0.1.0 && git push origin master --tags
+        │
+        ▼
+┌─────────────────────────────────┐
+│  Job 1: build (ubuntu)          │
+│  - Build CLI with bashly        │
+│  - Create GitHub release        │
+│  - Attach stash artifact        │
+└─────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────┐
+│  Job 2: update-formula (ubuntu) │
+│  - Download stash artifact      │
+│  - Compute sha256               │
+│  - Update Formula/stash.rb      │
+│  - Commit to master             │
+└─────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────┐
+│  Job 3: smoke-test (macos)      │
+│  - Download released stash      │
+│  - Verify version matches tag   │
+└─────────────────────────────────┘
+```
+
+### Creating a Release
+
+Use the Makefile target:
+
+```bash
+make release VERSION=0.2.0
+```
+
+This will:
+1. Update version in `src/bashly.yml`
+2. Commit the version bump
+3. Create git tag `v0.2.0`
+4. Push commit and tag to origin
+5. Trigger the release pipeline
+
+### Homebrew Distribution
+
+Users install via:
+
+```bash
+brew tap shakedlokits/stash
+brew install stash
+```
+
+The `Formula/stash.rb` is automatically updated by the release pipeline with the correct version URL and sha256.
 
 ## Documentation
 
