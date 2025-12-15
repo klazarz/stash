@@ -413,7 +413,7 @@ This will:
 Users install via:
 
 ```bash
-brew tap shakedlokits/stash
+brew tap shakedlokits/stash https://github.com/shakedlokits/stash
 brew install stash
 ```
 
