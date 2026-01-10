@@ -31,6 +31,16 @@ commands:
     required: true
     help: Path to the Markdown file to update
 
+- name: diff
+  help: Show differences between a Markdown file and its linked Apple Note
+  completions:
+  - <file>
+
+  args:
+  - name: file
+    required: true
+    help: Path to the Markdown file to compare
+
 - name: completions
   help: |-
     Generate bash completions

@@ -159,29 +159,3 @@ This will:
 2. Commit the change
 3. Create and push a git tag
 4. Trigger the release workflow (build, publish, update Homebrew formula)
-
-
-## Backlog & Contribution
-
-This backlog contains both current and future development items, feel free to take some or add to it:
-- [x] Basic Functionality
-   - [x] AppleScript notes access functions
-      - [x] Find note
-      - [x] Create note
-      - [x] Delete note
-      - [x] Update note
-      - [x] Read note
-   - [x] Markdown front-matter parser (get-id, extract, strip, update)
-   - [x] Push command shell script
-   - [x] Push command tests
-   - [x] Pull command shell script
-   - [x] Pull command tests
-   - [x] `Pandoc` integration
-   - [x] `Bashly` setup
-      - [x] CLI interface
-      - [x] Shell completion
-      - [ ] Documentation
-      - [x] Approval testing
-- [ ] Nice to have
-   - [ ] Diff changes (requires design)
-   - [ ] Attachments support
